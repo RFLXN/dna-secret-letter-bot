@@ -22,6 +22,7 @@ import { fetchAndFindLetter, fetchAndFindContents, createFullLetterUrl, extractP
         const id = extractPostId(letterUrl);
 
         latestLetterId = id;
+        break;
     }
 
     
