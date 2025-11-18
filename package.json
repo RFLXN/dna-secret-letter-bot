@@ -1,6 +1,5 @@
 {
   "name": "dna-secret-letter-bot",
-  "packageManager": "yarn@4.8.1",
   "type": "module",
   "scripts": {
     "build": "tsc",
