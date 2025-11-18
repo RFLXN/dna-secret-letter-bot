@@ -11,7 +11,7 @@ import { fetchAndFindLetter, fetchAndFindContents, createFullLetterUrl, extractP
 
     let latestLetterId = -1;
 
-    cron.schedule("* * * * *", () => {
+    cron.schedule("0 * * * *", () => {
         let currentAttempts = 0;
         const i = setInterval(async () => {
             currentAttempts += 1;
