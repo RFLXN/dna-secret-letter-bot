@@ -1,0 +1,6 @@
+.vscode
+.yarn
+dist
+.env
+.pnp.cjs
+.pnp.loader.mjs
