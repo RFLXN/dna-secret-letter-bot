@@ -10,60 +10,32 @@ import { fetchAndFindLetter, fetchAndFindContents, createFullLetterUrl, extractP
     console.log(`Logged in Discord as "${discord.user.displayName}" (${discord.user.id})`);
 
     let latestLetterId = -1;
-
-    // initial latest letter id init
-    while (true) {
-        await new Promise((resolve) => setTimeout(() => resolve(null), 1000 * 10));
-
+    
+    cron.schedule("*/5 * * * *", async () => {
         const letterPost = await fetchAndFindLetter();
-        if (!letterPost) continue;
+        if (!letterPost) return;
 
         const letterUrl = createFullLetterUrl(letterPost.url);
         const id = extractPostId(letterUrl);
 
+        console.log(`Letter announcement ID: ${id}`);
+
+        if (id <= latestLetterId) {
+            console.error(`ID is not newer than latest ID`);
+            return;
+        }
+
         latestLetterId = id;
-        break;
-    }
 
-    
+        const contents = await fetchAndFindContents(letterUrl);
+        if (!contents || contents.length < 1) return; 
 
-    cron.schedule("0 * * * *", () => {
-        let currentAttempts = 0;
-        const i = setInterval(async () => {
-            currentAttempts += 1;
-            
-            if (currentAttempts >= 20) {
-                clearInterval(i);
-                return;
-            }
-
-            const letterPost = await fetchAndFindLetter();
-            if (!letterPost) return;
-
-            const letterUrl = createFullLetterUrl(letterPost.url);
-            const id = extractPostId(letterUrl);
-
-            console.log(`Letter announcement ID: ${id}`);
-
-            if (id <= latestLetterId) {
-                console.error(`ID is not newer than latest ID`);
-                return;
-            }
-
-            latestLetterId = id;
-
-            const contents = await fetchAndFindContents(letterUrl);
-            if (!contents || contents.length < 1) return; 
-
-            const images = await fetchImages(contents);
-            if (!images) {
-                return;
-            };
-            
-            console.log("Send Message...");
-            await sendMessage(discord, contents, images);
-
-            clearInterval(i);
-        }, 1000 * 60);
+        const images = await fetchImages(contents);
+        if (!images) {
+            return;
+        };
+        
+        console.log("Send Message...");
+        await sendMessage(discord, contents, images);
     });
 })();
