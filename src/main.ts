@@ -11,6 +11,21 @@ import { fetchAndFindLetter, fetchAndFindContents, createFullLetterUrl, extractP
 
     let latestLetterId = -1;
 
+    // initial latest letter id init
+    while (true) {
+        await new Promise((resolve) => setTimeout(() => resolve(null), 1000 * 10));
+
+        const letterPost = await fetchAndFindLetter();
+        if (!letterPost) continue;
+
+        const letterUrl = createFullLetterUrl(letterPost.url);
+        const id = extractPostId(letterUrl);
+
+        latestLetterId = id;
+    }
+
+    
+
     cron.schedule("0 * * * *", () => {
         let currentAttempts = 0;
         const i = setInterval(async () => {
