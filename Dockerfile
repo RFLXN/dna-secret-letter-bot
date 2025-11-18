@@ -6,7 +6,7 @@ WORKDIR /app
 RUN corepack enable
 
 # Copy package files
-COPY package.json yarn.lock .yarnrc.yml ./
+COPY package.json yarn.lock ./
 
 # Install dependencies
 RUN yarn install --immutable
